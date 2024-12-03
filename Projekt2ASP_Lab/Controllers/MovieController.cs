@@ -18,7 +18,7 @@ namespace Projekt2ASP_Lab.Controllers
             _context = context;
         }
 
-        // GET: Movie
+        // GET: Moviee
         
         public async Task<IActionResult> Index(int page = 1, int size = 10)
         {
