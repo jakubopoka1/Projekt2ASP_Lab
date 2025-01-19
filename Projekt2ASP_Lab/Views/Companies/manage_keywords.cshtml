@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Projekt2ASP_Lab.ViewModels.ManageKeywordsViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Keywords - @Model.MovieTitle</title>
+</head>
+<body>
+<h1>Manage Keywords for "@Model.MovieTitle"</h1>
+
+<h2>Existing Keywords</h2>
+<ul>
+    @foreach (var keyword in Model.Keywords)
+    {
+    <li>@keyword.KeywordName</li>
+    }
+</ul>
+
+<h2>Add a New Keyword</h2>
+<form method="post" action="/api/companies/movies/@Model.MovieId/keywords">
+    <label for="keywordName">Keyword Name:</label>
+    <input type="text" id="keywordName" name="keywordName" required />
+    <button type="submit">Add Keyword</button>
+</form>
+
+</body>
+</html>

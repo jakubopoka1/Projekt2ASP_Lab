@@ -1,0 +1,33 @@
+@model IEnumerable<Projekt2ASP_Lab.ViewModels.MovieViewModel>
+
+<h1>Movies for Company: @ViewBag.CompanyName</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Popularity</th>
+        <th>Revenue</th>
+        <th>Runtime</th>
+        <th>Votes Avg</th>
+        <th>Votes Count</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var movie in Model)
+    {
+    <tr>
+        <td>@movie.Title</td>
+        <td>@movie.Popularity</td>
+        <td>@movie.Revenue</td>
+        <td>@movie.Runtime</td>
+        <td>@movie.VotesAvg</td>
+        <td>@movie.VotesCount</td>
+        <td>
+            <a href="/api/companies/movies/@movie.MovieId/manage-keywords">Manage Keywords</a>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>

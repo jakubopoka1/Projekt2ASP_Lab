@@ -69,7 +69,7 @@ namespace Projekt2ASP_Lab.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(movie);
+            return View();
         }
 
         // GET: Movie/Edit/5

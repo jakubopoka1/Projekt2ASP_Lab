@@ -1,0 +1,38 @@
+@model IEnumerable<Projekt2ASP_Lab.ViewModels.ProductionCompanyViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Production Companies</title>
+</head>
+<body>
+<h1>Production Companies</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Company Name</th>
+        <th>Number of Movies</th>
+        <th>Total Budget</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var company in Model)
+    {
+        <tr>
+            <td>
+                @company.Name
+            </td>
+            <td>
+                <a href="/api/companies/@company.CompanyId/movies">
+                    @company.MovieCount
+                </a>
+            </td>
+            <td>@company.TotalBudget.ToString("C")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+</body>
+</html>
+
