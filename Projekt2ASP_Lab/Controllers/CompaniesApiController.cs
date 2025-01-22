@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Projekt2ASP_Lab.Models;
 using Projekt2ASP_Lab.Models.Movies;
 using Projekt2ASP_Lab.ViewModels;
 
@@ -18,9 +19,13 @@ public class CompaniesApiController : Controller
     }
 
     [HttpGet("list")]
-    public IActionResult GetCompaniesWithDetails()
+    public IActionResult GetCompaniesWithDetails(int page = 1, int pageSize = 20)
     {
+        var totalCompanies = _context.ProductionCompanies.Count();
+
         var companies = _context.ProductionCompanies
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(c => new ProductionCompanyViewModel
             {
                 CompanyId = c.CompanyId,
@@ -33,17 +38,30 @@ public class CompaniesApiController : Controller
             .AsNoTracking()
             .ToList();
 
-        return View("~/Views/Companies/production_companies_list.cshtml", companies);
+        var viewModel = new PagedResult<ProductionCompanyViewModel>
+        {
+            Items = companies,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalCount = totalCompanies
+        };
 
+        return View("~/Views/Companies/production_companies_list.cshtml", viewModel);
     }
 
 
 
+
     [HttpGet("{companyId}/movies")]
-    public IActionResult GetMoviesByCompanyView(int companyId)
+    public IActionResult GetMoviesByCompanyView(int companyId, int page = 1, int pageSize = 10)
     {
+        var totalMovies = _context.MovieCompanies
+            .Count(mc => mc.CompanyId == companyId);
+
         var movies = _context.MovieCompanies
             .Where(mc => mc.CompanyId == companyId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(mc => new MovieViewModel
             {
                 MovieId = mc.MovieId ?? 0,
@@ -60,8 +78,17 @@ public class CompaniesApiController : Controller
         ViewBag.CompanyName = _context.ProductionCompanies
             .FirstOrDefault(c => c.CompanyId == companyId)?.CompanyName;
 
-        return View("~/Views/Companies/movies_by_company.cshtml", movies);
+        var viewModel = new PagedResult<MovieViewModel>
+        {
+            Items = movies,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalCount = totalMovies
+        };
+
+        return View("~/Views/Companies/movies_by_company.cshtml", viewModel);
     }
+
 
 
 

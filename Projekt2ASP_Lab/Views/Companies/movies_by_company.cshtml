@@ -1,4 +1,4 @@
-@model IEnumerable<Projekt2ASP_Lab.ViewModels.MovieViewModel>
+@model PagedResult<Projekt2ASP_Lab.ViewModels.MovieViewModel>
 
 <h1>Movies for Company: @ViewBag.CompanyName</h1>
 
@@ -15,7 +15,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var movie in Model)
+    @foreach (var movie in Model.Items)
     {
     <tr>
         <td>@movie.Title</td>
@@ -31,3 +31,30 @@
     }
     </tbody>
 </table>
+
+<div>
+    <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+    <nav>
+        @if (Model.CurrentPage > 1)
+        {
+        <a href="?companyId=@ViewBag.CompanyId&page=1&pageSize=@Model.PageSize">First</a>
+        <a href="?companyId=@ViewBag.CompanyId&page=@(Model.CurrentPage - 1)&pageSize=@Model.PageSize">Previous</a>
+        }
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+        if (i == Model.CurrentPage)
+        {
+        <span>@i</span>
+        }
+        else
+        {
+        <a href="?companyId=@ViewBag.CompanyId&page=@i&pageSize=@Model.PageSize">@i</a>
+        }
+        }
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+        <a href="?companyId=@ViewBag.CompanyId&page=@(Model.CurrentPage + 1)&pageSize=@Model.PageSize">Next</a>
+        <a href="?companyId=@ViewBag.CompanyId&page=@Model.TotalPages&pageSize=@Model.PageSize">Last</a>
+        }
+    </nav>
+</div>
