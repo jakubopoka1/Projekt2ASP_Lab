@@ -47,26 +47,26 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     var admin = new IdentityUser()
     {
         Id = ADMIN_ID,
-        UserName = "Kuba",
-        NormalizedUserName = "KUBA",
-        Email = "kuba@wsei.edu.pl",
-        NormalizedEmail = "KUBA@WSEI.EDU.PL",
+        UserName = "Jakub",
+        NormalizedUserName = "JAKUB",
+        Email = "jakub@wsei.edu.pl",
+        NormalizedEmail = "JAKUB@WSEI.EDU.PL",
         EmailConfirmed = true
     };
 
     var user = new IdentityUser()
     {
         Id = USER_ID,
-        UserName = "Maciek",
-        NormalizedUserName = "MACIEK",
-        Email = "maciek@gmail.com",
-        NormalizedEmail = "MACIEK@GMAIL.COM",
+        UserName = "Adam",
+        NormalizedUserName = "ADAM",
+        Email = "adam@gmail.com",
+        NormalizedEmail = "ADAM@GMAIL.COM",
         EmailConfirmed = true
     };
 
     var hasher = new PasswordHasher<IdentityUser>();
-    admin.PasswordHash = hasher.HashPassword(admin, "Haslo123!");
-    user.PasswordHash = hasher.HashPassword(user, "Haslo123!");
+    admin.PasswordHash = hasher.HashPassword(admin, "haslo1");
+    user.PasswordHash = hasher.HashPassword(user, "haslo1");
 
     modelBuilder.Entity<IdentityUser>()
         .HasData(admin, user);

@@ -1,0 +1,8 @@
+@model IEnumerable<Projekt2ASP_Lab.Models.Movies.Keyword>
+
+<ul>
+    @foreach (var keyword in Model)
+    {
+        <li>@keyword.KeywordName</li>
+    }
+</ul>

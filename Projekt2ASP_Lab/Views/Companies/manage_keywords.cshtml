@@ -1,28 +1,45 @@
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Projekt2ASP_Lab.ViewModels.ManageKeywordsViewModel
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Keywords - @Model.MovieTitle</title>
-</head>
-<body>
 <h1>Manage Keywords for "@Model.MovieTitle"</h1>
 
 <h2>Existing Keywords</h2>
-<ul>
-    @foreach (var keyword in Model.Keywords)
-    {
-        <li>@keyword.KeywordName</li>
-    }
-</ul>
+<div id="keywords-list">
+    @await Html.PartialAsync("_KeywordsList", Model.Keywords)
+</div>
 
 <h2>Add a New Keyword</h2>
-<form method="post" action="/api/companies/movies/@Model.MovieId/keywords">
+<form id="add-keyword-form">
     <label for="keywordName">Keyword Name:</label>
     <input type="text" id="keywordName" name="keywordName" required />
     <button type="submit">Add Keyword</button>
 </form>
 
-</body>
-</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#add-keyword-form').on('submit', function(event) {
+            event.preventDefault();
+
+            var formData = {
+                keywordName: $('#keywordName').val()
+            };
+
+            console.log("Sending data to server:", formData);
+
+            $.ajax({
+                url: '/api/companies/movies/@Model.MovieId/keywords',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    console.log("Server response:", response);
+                    $('#keywords-list').html(response);
+                    $('#keywordName').val('');
+                },
+                error: function(xhr) {
+                    console.error("Error response:", xhr.responseText);
+                    alert('Error adding keyword.');
+                }
+            });
+        });
+    });
+</script>

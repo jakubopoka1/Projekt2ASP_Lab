@@ -110,34 +110,70 @@ public class CompaniesApiController : Controller
     }
 
     [HttpPost("movies/{movieId}/keywords")]
-    public IActionResult AddKeywordToMovie(int movieId, [FromBody] string keywordName)
+    public IActionResult AddKeywordToMovie(int movieId, [FromForm] string keywordName)
     {
-        var existingKeyword = _context.Keywords
-            .FirstOrDefault(k => k.KeywordName!.ToLower() == keywordName.ToLower());
-
-        if (existingKeyword == null)
+        try
         {
-            existingKeyword = new Keyword { KeywordName = keywordName };
-            _context.Keywords.Add(existingKeyword);
-            _context.SaveChanges();
-        }
+            Console.WriteLine($"Step 1: Received request with movieId={movieId}, keywordName={keywordName}");
 
-        var existingRelation = _context.MovieKeywords
-            .FirstOrDefault(mk => mk.MovieId == movieId && mk.KeywordId == existingKeyword.KeywordId);
-
-        if (existingRelation == null)
-        {
-            var movieKeyword = new MovieKeyword
+            if (string.IsNullOrWhiteSpace(keywordName))
             {
-                MovieId = movieId,
-                KeywordId = existingKeyword.KeywordId
-            };
-            _context.MovieKeywords.Add(movieKeyword);
-            _context.SaveChanges();
-        }
+                return BadRequest("Keyword name cannot be empty.");
+            }
 
-        return Ok(new { Message = "Keyword added successfully." });
+            var existingKeyword = _context.Keywords
+                .FirstOrDefault(k => k.KeywordName!.ToLower() == keywordName.ToLower());
+
+            int keywordId;
+            if (existingKeyword != null)
+            {
+                keywordId = existingKeyword.KeywordId;
+            }
+            else
+            {
+                var maxId = _context.Keywords.Any()
+                    ? _context.Keywords.Max(k => k.KeywordId)
+                    : 0;
+                keywordId = maxId + 1;
+
+                var newKeyword = new Keyword
+                {
+                    KeywordId = keywordId,
+                    KeywordName = keywordName
+                };
+                _context.Keywords.Add(newKeyword);
+                _context.SaveChanges();
+            }
+
+            var existingRelation = _context.MovieKeywords
+                .FirstOrDefault(mk => mk.MovieId == movieId && mk.KeywordId == keywordId);
+
+            if (existingRelation == null)
+            {
+                var movieKeyword = new MovieKeyword
+                {
+                    MovieId = movieId,
+                    KeywordId = keywordId
+                };
+                _context.MovieKeywords.Add(movieKeyword);
+                _context.SaveChanges();
+            }
+
+            var keywords = _context.MovieKeywords
+                .Where(mk => mk.MovieId == movieId)
+                .Select(mk => mk.Keyword)
+                .ToList();
+
+            return PartialView("~/Views/Shared/_KeywordsList.cshtml", keywords);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return StatusCode(500, "An internal error occurred.");
+        }
     }
+
+
 
     [HttpGet("movies/{movieId}/manage-keywords")]
     public IActionResult ManageKeywords(int movieId)
@@ -150,11 +186,7 @@ public class CompaniesApiController : Controller
 
         var keywords = _context.MovieKeywords
             .Where(mk => mk.MovieId == movieId)
-            .Select(mk => new KeywordViewModel
-            {
-                KeywordId = mk.Keyword!.KeywordId,
-                KeywordName = mk.Keyword.KeywordName
-            })
+            .Select(mk => mk.Keyword)
             .ToList();
 
         var viewModel = new ManageKeywordsViewModel
@@ -163,6 +195,8 @@ public class CompaniesApiController : Controller
             MovieTitle = movie.Title,
             Keywords = keywords
         };
+
         return View("~/Views/Companies/manage_keywords.cshtml", viewModel);
     }
+
 }
