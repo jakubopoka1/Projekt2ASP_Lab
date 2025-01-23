@@ -48,6 +48,28 @@ public partial class MoviesDbContext : DbContext
     public virtual DbSet<ProductionCompany> ProductionCompanies { get; set; }
 
     public virtual DbSet<ProductionCountry> ProductionCountries { get; set; }
+    
+    public async Task AddKeywordAsync(string keywordName)
+    {
+        try
+        {
+            var maxId = await Keywords.MaxAsync(k => (int?)k.KeywordId) ?? 0;
+
+            var newKeyword = new Keyword
+            {
+                KeywordId = maxId + 1,
+                KeywordName = keywordName
+            };
+
+            Keywords.Add(newKeyword);
+            await SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while adding keyword: {ex.Message}");
+            throw;
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

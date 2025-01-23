@@ -20,7 +20,7 @@ namespace Projekt2ASP_Lab.Controllers
 
         // GET: Moviee
         
-        public async Task<IActionResult> Index(int page = 1, int size = 10)
+        public async Task<IActionResult> Index(int page = 1, int size = 20)
         {
             return View(
                 await _context

@@ -53,7 +53,7 @@ public class CompaniesApiController : Controller
 
 
     [HttpGet("{companyId}/movies")]
-    public IActionResult GetMoviesByCompanyView(int companyId, int page = 1, int pageSize = 10)
+    public IActionResult GetMoviesByCompanyView(int companyId, int page = 1, int pageSize = 20)
     {
         var totalMovies = _context.MovieCompanies
             .Count(mc => mc.CompanyId == companyId);
